@@ -14,7 +14,7 @@
     $post_objects = $wpdb->get_results($query_string, OBJECT);
 
     // Output this so we know what to do with the data
-    echo '<pre style="white-space: pre">get_results() returns: '.print_r($post_objects, true).'</pre>';
+    // echo '<pre style="white-space: pre">get_results() returns: '.print_r($post_objects, true).'</pre>';
 
     // Put that data in a simple array
     $post_titles = array();
@@ -23,7 +23,7 @@
     }
 
     // Output that array so we know it's working
-    echo '<pre style="white-space: pre">debug: '.print_r($post_titles, true).'</pre>';
+    // echo '<pre style="white-space: pre">debug: '.print_r($post_titles, true).'</pre>';
 
     // And now put it into a form we can use in the input data-list below
     $post_titles_list = implode(', ', $post_titles);
