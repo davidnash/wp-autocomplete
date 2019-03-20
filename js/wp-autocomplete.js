@@ -1,10 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Awesomplete AJAX demo from https://leaverou.github.io/awesomplete#ajax-example
+    // Make sure we're getting the variable/URL from wp_localize_script in functions.php
+    console.log( 'ajax_url: ' + wp_autocomplete.ajax_url );
+
     var ajax = new XMLHttpRequest();
-    ajax.open("GET", "https://restcountries.eu/rest/v1/lang/en", true);
+
+    // Open our autocomplete URL
+    ajax.open("POST", wp_autocomplete.ajax_url);  // From functions.php and wp_localize_script()
+
+    // Tell it what sort of data we're sending
+    ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    // Create some sample "input"
+    var user_input = encodeURI('this is a test');
+
+    // And send it
+    ajax.send('action=autocomplete_data&user_input=' + user_input);
+
+    // Output whatever we get back from the AJAX request
     ajax.onload = function() {
-        var list = JSON.parse(ajax.responseText).map(function(i) { return i.name; });
-        new Awesomplete(document.getElementById("autocomplete-field"),{ list: list });
-    };
-    ajax.send();
+        console.log(ajax.responseText);
+    }
 });
