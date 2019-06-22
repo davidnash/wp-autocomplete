@@ -10,9 +10,35 @@ function add_theme_scripts() {
 add_action('wp_enqueue_scripts', 'add_theme_scripts');
 
 function get_autocomplete() {
+    global $wpdb; // WordPress's database object
+
     if ( isset($_POST['user_input']) ) {
-        $list = array( 'aa first item', 'aa second item', 'aa third item', 'aa fourth item' );
-        echo json_encode( $list );
+        $input = $wpdb->esc_like(stripslashes($_POST['user_input']));
+
+        // Match strings that start with what user typed:
+        $input_starts_with = $input . '%';
+
+        // Or perhaps match strings that end with what the user typed:
+        $input_ends_with = '%' . $input;
+
+        // Or match if the user's input is anywhere in the string
+        $input_contains = '%' . $input . '%';
+
+        $sql = "select post_title
+            from $wpdb->posts
+            where post_title like %s
+            and post_status='publish'";
+
+        $sql = $wpdb->prepare($sql, $input_contains);  // Replaces the %s in $sql with $input_contains
+        $results = $wpdb->get_results($sql);  // Get the rows from the database
+
+        // Build an array of matching post titles
+        $post_titles = array();
+        foreach ($results as $r) {
+            $post_titles[] = addslashes($r->post_title);
+        }
+
+        echo json_encode($post_titles);
     }
 
     die(); // Stop WordPress from outputting 0
