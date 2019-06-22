@@ -11,7 +11,8 @@ add_action('wp_enqueue_scripts', 'add_theme_scripts');
 
 function get_autocomplete() {
     if ( isset($_POST['user_input']) ) {
-        echo $_POST['user_input'];
+        $list = array( 'aa first item', 'aa second item', 'aa third item', 'aa fourth item' );
+        echo json_encode( $list );
     }
 
     die(); // Stop WordPress from outputting 0
