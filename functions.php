@@ -1,6 +1,6 @@
 <?php
 function add_theme_scripts() {
-    wp_enqueue_style('awesomepletecss', get_template_directory_uri() . '/awesomplete/awesomplete.css');
+    wp_enqueue_style('awesompletecss', get_template_directory_uri() . '/awesomplete/awesomplete.css');
     wp_enqueue_script('awesompletejs', get_template_directory_uri() . '/awesomplete/awesomplete.js');
     wp_enqueue_script('theme-js', get_template_directory_uri() . '/js/wp-autocomplete.js', ['awesompletejs'] );
 
@@ -24,7 +24,8 @@ function get_autocomplete() {
         // Or match if the user's input is anywhere in the string
         $input_contains = '%' . $input . '%';
 
-        $sql = "select post_title
+        // Get the post title and the slug (ie post_name, gotta love WordPress!)
+        $sql = "select ID, post_title
             from $wpdb->posts
             where post_title like %s
             and post_status='publish'";
@@ -32,13 +33,16 @@ function get_autocomplete() {
         $sql = $wpdb->prepare($sql, $input_contains);  // Replaces the %s in $sql with $input_contains
         $results = $wpdb->get_results($sql);  // Get the rows from the database
 
-        // Build an array of matching post titles
-        $post_titles = array();
+        // Build an array of matching post URLs and titles
+        $post_data = array();
         foreach ($results as $r) {
-            $post_titles[] = addslashes($r->post_title);
+            $post_data[] = array(
+                'value' => get_permalink($r->ID),  // Note: This is another database call
+                'label' => addslashes($r->post_title),
+            );
         }
 
-        echo json_encode($post_titles);
+        echo json_encode($post_data);
     }
 
     die(); // Stop WordPress from outputting 0
